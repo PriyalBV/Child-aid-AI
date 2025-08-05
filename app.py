@@ -34,7 +34,8 @@ for filename in os.listdir(DOCUMENT_FOLDER):
             titles.append(title if title else filename.replace('.txt', ''))
 
 # --- Step 2: Load Sentence Transformer Model ---
-model = SentenceTransformer('all-MiniLM-L6-v2')
+# model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
 
 # --- Step 3: Helper Functions ---
 
