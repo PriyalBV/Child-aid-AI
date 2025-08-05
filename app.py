@@ -35,7 +35,7 @@ for filename in os.listdir(DOCUMENT_FOLDER):
 
 # --- Step 2: Load Sentence Transformer Model ---
 # model = SentenceTransformer('all-MiniLM-L6-v2')
-model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
+#model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
 
 # --- Step 3: Helper Functions ---
 
