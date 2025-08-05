@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChildAid AI — Search</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/static/main_bg.jpg') no-repeat center center ;
+            background-size: cover;
+            
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .search-container {
+            /* background: url('/static/background.png') no-repeat center center ;
+            background-size: cover; */
+            background-color: rgba(255, 255, 255, 0.3); /* no background image or color */
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        form input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            outline: none;
+
+            background-color: rgba(255, 255, 255, 0.75); /* 👈 translucent white */
+            color: #000;                                 /* 👈 dark text for readability */
+            backdrop-filter: blur(6px);  
+        }
+
+        form button {
+            padding: 10px 20px;
+            background-color: #75562f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #483b1a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="search-container">
+    <h1>🔍 ChildAid </h1>
+    <form action="/search" method="POST">
+        <input type="text" name="query" placeholder="Type your query, e.g. 'Aftercare for 18+'" required>
+        <br>
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+</body>
+</html>

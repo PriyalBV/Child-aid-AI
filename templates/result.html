@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results - ChildAid AI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #2e2525; /* deep soil brown */
+            color: #f5f3f0; /* warm off-white */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2, h3 {
+            color: #f4e9db;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        li {
+            background: rgba(255, 248, 220, 0.1); /* light beige translucent */
+            border: 1px solid #5c4438;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        li:hover {
+            background: rgba(255, 248, 220, 0.2);
+            transform: scale(1.02);
+        }
+
+        pre {
+            white-space: pre-wrap;
+            color: #fffaf0;
+        }
+
+        a {
+            margin-top: 2rem;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            background-color: #8b5e3c;
+            color: white;
+            border-radius: 8px;
+            
+        }
+
+        
+    </style>
+</head>
+<body>
+    <h2>Query: {{ query }}</h2>
+    <h3>Top Matches:</h3>
+    <ul>
+        {% for result in results %}
+        <li>
+            <strong>{{ result.title if result.title else "Matching Scheme" }}</strong><br>
+            <pre>{{ result.content if result.content else result }}</pre>
+            {% if result.score %}
+            <p><em>Relevance Score: {{ result.score }}</em></p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/">🔍 Search again</a>
+</body>
+</html>
