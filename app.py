@@ -81,9 +81,12 @@ def filter_documents_by_keywords(query, docs, tags):
 @app.route('/')
 def index():
     return render_template('index.html')
-
 @app.route('/search', methods=['POST'])
 def search():
+    from sentence_transformers import SentenceTransformer  # move import inside
+    model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
+
+
     query = request.form['query']
 
     # Step 4: Filter relevant documents
@@ -114,10 +117,6 @@ def search():
     return render_template('result.html', query=query, results=results)
 
 # --- Run the App ---
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
