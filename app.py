@@ -77,30 +77,27 @@ def search():
             'score': 0
         }])
 
-    # Read and embed only matched documents
-    contents = []
-    titles = []
+    query_embedding = model.encode(query, convert_to_tensor=True)
+
+    scored_results = []
+
     for doc in matched_docs:
         with open(doc['path'], 'r') as f:
             lines = f.readlines()
         content = ''.join([l for l in lines if not l.lower().startswith(('tags:', 'title:'))])
-        contents.append(content)
-        titles.append(doc['title'])
-
-    query_embedding = model.encode(query, convert_to_tensor=True)
-    doc_embeddings = model.encode(contents, convert_to_tensor=True)
-    sims = util.pytorch_cos_sim(query_embedding, doc_embeddings)[0]
-    top_k = torch.topk(sims, k=min(3, len(contents)))
-
-    results = []
-    for idx, score in zip(top_k.indices, top_k.values):
-        results.append({
-            'title': titles[idx],
-            'content': contents[idx],
-            'score': round(float(score), 4)
+        doc_embedding = model.encode(content, convert_to_tensor=True)
+        score = util.pytorch_cos_sim(query_embedding, doc_embedding).item()
+        scored_results.append({
+            'title': doc['title'],
+            'content': content,
+            'score': round(score, 4)
         })
 
-    return render_template('result.html', query=query, results=results)
+    # Sort by score and take top 3
+    scored_results.sort(key=lambda x: x['score'], reverse=True)
+    top_results = scored_results[:3]
+
+    return render_template('result.html', query=query, results=top_results)
 
 # --- Deploy Ready ---
 if __name__ == '__main__':
