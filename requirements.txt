@@ -32,3 +32,11 @@ tqdm==4.67.1
 transformers==4.55.2
 typing_extensions==4.14.1
 urllib3==2.5.0
+flask
+sentence-transformers
+torch
+jinja2
+numpy
+scipy
+scikit-learn
+tqdm
