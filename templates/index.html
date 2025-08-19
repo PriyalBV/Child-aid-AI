@@ -71,8 +71,8 @@
 <div class="search-container">
     <h1>🔍 ChildAid </h1>
     <!-- <form action="/search" method="POST"> -->
-    <form method="POST" action="{% url 'search' %}">
-    {% csrf_token %}
+    <form method="POST" action="{{ url_for('search') }}">
+
         <input type="text" name="query" placeholder="Type your query, e.g. 'Aftercare for 18+'" required>
         <br>
         <button type="submit">Search</button>
