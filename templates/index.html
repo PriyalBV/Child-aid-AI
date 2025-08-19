@@ -70,7 +70,9 @@
 
 <div class="search-container">
     <h1>🔍 ChildAid </h1>
-    <form action="/search" method="POST">
+    <!-- <form action="/search" method="POST"> -->
+    <form method="POST" action="{% url 'search' %}">
+    {% csrf_token %}
         <input type="text" name="query" placeholder="Type your query, e.g. 'Aftercare for 18+'" required>
         <br>
         <button type="submit">Search</button>
