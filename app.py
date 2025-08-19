@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from sentence_transformers import SentenceTransformer, util
-import torch
+# import torch
 import os
 import re
 
