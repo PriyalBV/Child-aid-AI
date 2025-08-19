@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request
-from sentence_transformers import SentenceTransformer, util
-# import torch
 import os
 import re
+import requests
+import json
 
 app = Flask(__name__)
 DOCUMENT_FOLDER = "documents"
 
-# --- Load Model Once ---
-model = SentenceTransformer("paraphrase-MiniLM-L3-v2")
+# --- Hugging Face API setup ---
+HF_API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/paraphrase-MiniLM-L3-v2"
+HF_API_TOKEN = os.environ.get("HF_API_TOKEN")  # Set your Hugging Face token in Replit Secrets
+
+headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
 # --- Index Files with Metadata Only ---
 file_index = []
@@ -31,12 +34,10 @@ for filename in os.listdir(DOCUMENT_FOLDER):
             }
         )
 
-
 # --- Helper: Extract age ---
 def extract_age_from_query(query):
     match = re.search(r"\b(\d{1,2})\b", query)
     return int(match.group(1)) if match else None
-
 
 # --- Helper: Filter relevant docs ---
 def filter_docs(query):
@@ -66,12 +67,27 @@ def filter_docs(query):
 
     return matched
 
+# --- Helper: Hugging Face embedding ---
+def get_embedding(text):
+    payload = {"inputs": text}
+    response = requests.post(HF_API_URL, headers=headers, json=payload)
+    if response.status_code == 200:
+        embedding = response.json()[0]  # Extract vector
+        return embedding
+    else:
+        print("HF API error:", response.status_code, response.text)
+        return None
+
+# --- Helper: Cosine similarity ---
+def cosine_similarity(vec1, vec2):
+    import numpy as np
+    vec1, vec2 = np.array(vec1), np.array(vec2)
+    return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
 # --- Routes ---
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -91,7 +107,9 @@ def search():
             ],
         )
 
-    query_embedding = model.encode(query, convert_to_tensor=True)
+    query_embedding = get_embedding(query)
+    if not query_embedding:
+        return "Error fetching embedding from Hugging Face API"
 
     scored_results = []
 
@@ -101,20 +119,20 @@ def search():
         content = "".join(
             [l for l in lines if not l.lower().startswith(("tags:", "title:"))]
         )
-        doc_embedding = model.encode(content, convert_to_tensor=True)
-        score = util.pytorch_cos_sim(query_embedding, doc_embedding).item()
+        doc_embedding = get_embedding(content)
+        if not doc_embedding:
+            continue
+        score = cosine_similarity(query_embedding, doc_embedding)
         scored_results.append(
             {"title": doc["title"], "content": content, "score": round(score, 4)}
         )
 
-    # Sort by score and take top 3
     scored_results.sort(key=lambda x: x["score"], reverse=True)
     top_results = scored_results[:3]
 
     return render_template("result.html", query=query, results=top_results)
 
-
-# --- Deploy Ready with Debug ---
+# --- Deploy Ready ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
